@@ -8,7 +8,7 @@ from app.events.menu.states import MenuStates
 
 @async_event_error_handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = await UserRepo().get_or_create(update.effective_user.id, update.effective_user.username)
+    user = await UserRepo.get_or_create(update.effective_user.id, update.effective_user.username)
     print(user)
     print(update)
     print(context)
