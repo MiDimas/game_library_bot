@@ -27,3 +27,12 @@ class UserRepo(BaseRepo):
             print(user_obj)
             user_obj.created_now = created_now
             return user_obj
+        
+    async def get_user_by_telegram_id(self, telegram_id: int) -> User:
+        async with async_session() as session:
+            query = select(User).filter(User.telegram_id == telegram_id)
+            result = await session.execute(query)
+            data = result.scalar_one_or_none()
+            if not data:
+                return None
+            return UserType.model_validate(data)

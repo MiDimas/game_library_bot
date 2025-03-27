@@ -1,5 +1,4 @@
 from telegram import ReplyKeyboardMarkup, KeyboardButton
-from telegram.ext import ReplyKeyboardMarkup
 
 
 def main_menu():

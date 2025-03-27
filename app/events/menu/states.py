@@ -1,4 +1,6 @@
 class MenuStates:
+    UNDEFINED = "undefined"
+    START = "start"
     MENU = "menu"
     ADD_GAME = "add_game"
     MY_GAMES = "my_games"

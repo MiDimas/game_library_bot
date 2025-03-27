@@ -2,11 +2,12 @@ import os
 import asyncio
 
 from dotenv import load_dotenv
-from telegram.ext import Application, CommandHandler
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
 from app.events import start
 from app.config.main_conf import settings
 from app.database import init_db
+from app.conversation.conversation_handler import conversation_handler
 # Загрузка переменных окружения
 load_dotenv()
 
@@ -28,10 +29,12 @@ async def main():
 
 
     # Добавляем обработчики команд
-    # application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('start', start))
+    # application.add_handler(MessageHandler(filters.Regex(r"^🏠 Главное меню$"), menu))
     # application.add_handler(CommandHandler('list', list_games))
     # application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, add_game))
-    
+    application.add_handler(conversation_handler)
+
     # Запускаем бота
     print('Starting bot...')
     await application.initialize()
