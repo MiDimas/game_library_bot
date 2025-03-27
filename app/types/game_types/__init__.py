@@ -1,3 +1,3 @@
-from .game import Game, GameFull 
+from .game import Game, GameFull, GameWithUsername
 
-__all__ = ['Game', 'GameFull']
+__all__ = ['Game', 'GameFull', 'GameWithUsername']

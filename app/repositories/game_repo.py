@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from app.database import async_session
 from app.repositories.base_repo import BaseRepo
 from app.models.Game import Game
-from app.types.game_types import Game as GameType
+from app.types.game_types import Game as GameType, GameWithUsername
 from app.helpers.exceptions.game_exceptions import GameAlreadyExistsError
 
 
@@ -43,3 +43,29 @@ class GameRepo(BaseRepo):
             print(e)
             raise GameAlreadyExistsError(f"Игра {game_name} уже в списке ожидания")
 
+
+    @classmethod
+    async def get_games_by_user_telegram_id(cls, user_id: int, limit: int = 10, offset: int = 0) -> list[GameType]:
+        async with async_session() as session:
+            from app.models.User import User
+            query = select(Game.name, Game.created_at, User.username.label('username'))\
+                    .join(User, Game.user_id == User.id)\
+                    .filter(User.telegram_id == user_id)\
+                    .order_by(Game.created_at.desc()).limit(limit).offset(offset)
+            result = await session.execute(query)
+            games = result.all()
+
+            return [GameType.model_validate(game) for game in games]
+
+
+    @classmethod
+    async def get_all_games(cls, limit: int = 10, offset: int = 0) -> list[GameWithUsername]:
+        async with async_session() as session:
+            from app.models.User import User
+            query = select(Game.name, Game.created_at, User.username\
+                    .label('username')).join(User, Game.user_id == User.id)\
+                    .order_by(Game.created_at.desc()).limit(limit).offset(offset)
+            
+            result = await session.execute(query)
+            games = result.all()
+            return [GameWithUsername.model_validate(game) for game in games]

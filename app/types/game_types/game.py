@@ -10,10 +10,11 @@ class Game(BaseModel):
         from_attributes = True
 
 
+class GameWithUsername(Game):
+    username: str
+
 class GameFull(Game):
     id: int
     user_id: int
-    price: float
-    url: str
     
     
