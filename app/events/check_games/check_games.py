@@ -4,6 +4,8 @@ from telegram.ext import ContextTypes
 from app.helpers.decorators import async_event_error_handler
 from app.repositories.game_repo import GameRepo
 from app.events.menu.states import MenuStates
+from app.helpers.checks import check_is_admin_channel
+from app.config.main_conf import settings
 
 keyboard_in_menu = [
     [InlineKeyboardButton('Назад в меню', callback_data='menu')]
@@ -13,6 +15,9 @@ reply_markup_in_menu = InlineKeyboardMarkup(keyboard_in_menu)
 @async_event_error_handler
 async def check_games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    if not await check_is_admin_channel(context, settings.CHANNEL_ID, user.id):
+        await message.edit_text("Вы не являетесь администратором канала!", reply_markup=reply_markup_in_menu)
+        return MenuStates.MENU
     message = update.effective_message
     is_callback = bool(update.callback_query)
     if is_callback:

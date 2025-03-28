@@ -9,7 +9,7 @@ class UserRepo(BaseRepo):
     model = User
 
     @classmethod
-    async def get_or_create(cls, telegram_id: int, username: str) -> UserType:
+    async def get_or_create(cls, telegram_id: int, username: str, is_admin: bool=False ) -> UserType:
         async with async_session() as session:
             query = select(User).filter(User.telegram_id == telegram_id)
             result = await session.execute(query)
@@ -18,12 +18,17 @@ class UserRepo(BaseRepo):
             if not user: 
                 user = User(
                     telegram_id=telegram_id,
-                    username=username
+                    username=username,
+                    is_admin=is_admin
                 )
                 session.add(user)
                 await session.commit()
                 await session.refresh(user)
                 created_now = True
+            elif is_admin != user.is_admin:
+                user.is_admin = is_admin
+                await session.commit()
+                await session.refresh(user)
             user_obj = UserType.model_validate(user)
             print(user_obj)
             user_obj.created_now = created_now

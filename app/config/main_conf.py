@@ -4,7 +4,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     TELEGRAM_TOKEN: str
-    ADMIN_ID: int
     CHANNEL_ID: str
     MAX_GAMES_PER_DAY: int|None = 2
     DB_HOST: str

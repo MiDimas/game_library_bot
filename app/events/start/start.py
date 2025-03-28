@@ -5,10 +5,13 @@ from app.helpers.decorators import async_event_error_handler
 from app.repositories.user_repo import UserRepo
 from app.events.menu.main_menu import main_menu
 from app.events.menu.states import MenuStates
-
+from app.helpers.checks import check_is_admin_channel
+from app.config.main_conf import settings
 @async_event_error_handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = await UserRepo.get_or_create(update.effective_user.id, update.effective_user.username)
+    tg_user = update.effective_user
+    is_admin = await check_is_admin_channel(context, settings.CHANNEL_ID, tg_user.id)
+    user = await UserRepo.get_or_create(tg_user.id, update.effective_user.username)
     print(user)
     print(update)
     print(context)
