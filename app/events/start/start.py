@@ -11,7 +11,7 @@ from app.config.main_conf import settings
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tg_user = update.effective_user
     is_admin = await check_is_admin_channel(context, settings.CHANNEL_ID, tg_user.id)
-    user = await UserRepo.get_or_create(tg_user.id, update.effective_user.username)
+    user = await UserRepo.get_or_create(tg_user.id, update.effective_user.username, is_admin=is_admin)
     print(user)
     print(update)
     print(context)
