@@ -1,0 +1,10 @@
+services:
+  bot:
+    container_name: game-bot
+    image: midimas/game_bot:latest
+    env_file:
+      - .env
+    restart: unless-stopped
+    # if you want to use mounted .env file, uncomment this line
+    # volumes:
+    #   - ./path/to/.env:/appbot/app/config/.env

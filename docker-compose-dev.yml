@@ -1,0 +1,17 @@
+services:
+  bot:
+    container_name: game-bot-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev 
+      tags:
+        - game-bot-dev:latest
+    # if you use env file from another directory, uncomment this line
+    # env_file:
+    #   - .env
+    restart: unless-stopped
+    volumes:
+      - ./app:/appbot/app
+      - ./bot.py:/appbot/bot.py
+      - ./.env:/appbot/.env
+

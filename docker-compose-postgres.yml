@@ -1,0 +1,35 @@
+services:
+  bot:
+    container_name: game-bot
+    image: midimas/game_bot:latest
+    env_file:
+      - .env
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - CHANNEL_ID=${CHANNEL_ID}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-postgres}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-5432}
+    restart: unless-stopped
+    # if you want to use mounted .env file, uncomment this line
+    # volumes:
+    #   - ./path/to/.env:/appbot/app/config/.env
+    depends_on:
+      - db
+
+  db:
+    container_name: db-game-bot
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_DB=${DB_NAME:-postgres}
+    ports:
+      - ${DB_PORT:-5432}:5432
+    restart: unless-stopped
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data

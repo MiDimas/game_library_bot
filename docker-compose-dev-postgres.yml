@@ -1,0 +1,41 @@
+services:
+  bot:
+    container_name: game-bot-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      tags:
+        - game-bot-dev:latest
+    # if you use env file from another directory, uncomment this line
+    # env_file:
+    #   - .env
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - CHANNEL_ID=${CHANNEL_ID}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-postgres}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-5432}
+    restart: unless-stopped
+    volumes:
+      - ./app:/appbot/app
+      - ./bot.py:/appbot/bot.py
+      - ./.env:/appbot/.env
+    depends_on:
+      - db
+
+  db:
+    container_name: db-game-bot-dev
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_DB=${DB_NAME:-postgres}
+    ports:
+      - ${DB_PORT:-5432}:5432
+    restart: unless-stopped
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
